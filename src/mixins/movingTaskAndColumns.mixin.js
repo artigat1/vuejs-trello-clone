@@ -1,4 +1,14 @@
+import { useBoardStore } from '@/stores/board.store'
+
 export default {
+  setup () {
+    const boardStore = useBoardStore()
+
+    return {
+      boardStore
+    }
+  },
+
   props: {
     column: {
       type: Object,
@@ -31,7 +41,7 @@ export default {
     }) {
       const fromTasks = this.board.columns[fromColumnIndex].tasks
 
-      this.$store.commit('MOVE_TASK', {
+      this.boardStore.moveTask({
         fromTasks,
         fromTaskIndex,
         toTasks: this.column.tasks,
@@ -40,7 +50,7 @@ export default {
     },
 
     moveColumn ({ fromColumnIndex }) {
-      this.$store.commit('MOVE_COLUMN', {
+      this.boardStore.moveColumn({
         fromColumnIndex,
         toColumnIndex: this.columnIndex
       })

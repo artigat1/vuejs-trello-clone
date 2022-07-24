@@ -31,9 +31,18 @@ import ColumnTask from '@/components/ColumnTask.vue'
 import AppDrag from '@/components/AppDrag.vue'
 import AppDrop from '@/components/AppDrop.vue'
 import movingTasksAndColumnsMixin from '@/mixins/movingTaskAndColumns.mixin.js'
+import { useBoardStore } from '@/stores/board.store'
 
 export default {
   name: 'BoardColumn',
+
+  setup () {
+    const boardStore = useBoardStore()
+
+    return {
+      boardStore
+    }
+  },
 
   components: {
     AppDrag,
@@ -47,7 +56,7 @@ export default {
 
   methods: {
     createTask (event, tasks) {
-      this.$store.commit('CREATE_TASK', {
+      this.boardStore.createTask({
         tasks,
         name: event.target.value
       })

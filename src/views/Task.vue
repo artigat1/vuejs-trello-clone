@@ -16,20 +16,25 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { useBoardStore } from '@/stores/board.store'
 
 export default {
-  computed: {
-    ...mapGetters(['getTask']),
+  setup () {
+    const boardStore = useBoardStore()
 
+    return {
+      boardStore
+    }
+  },
+  computed: {
     task () {
-      return this.getTask(this.$route.params.id)
+      return this.boardStore.getTask(this.$route.params.id)
     }
   },
 
   methods: {
     updateTaskProperty (event, key) {
-      this.$store.commit('UPDATE_TASK', {
+      this.boardStore.updateTask({
         task: this.task,
         key,
         value: event.target.value

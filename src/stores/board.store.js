@@ -1,24 +1,15 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import defaultBoard from './default-board'
-import {
-  saveStatePlugin,
-  uuid
-} from '@/utils'
+import { defineStore } from 'pinia'
+import { useStorage } from '@vueuse/core'
 
-Vue.use(Vuex)
+import defaultBoard from '@/default-board'
+import { uuid } from '@/utils'
 
 const board = JSON.parse(localStorage.getItem('board')) || defaultBoard
 
-export default new Vuex.Store({
-  plugins: [
-    saveStatePlugin
-  ],
-
-  state: {
-    board
-  },
-
+export const useBoardStore = defineStore('board', {
+  state: () => ({
+    board: useStorage('board', board)
+  }),
   getters: {
     getTask (state) {
       return (id) => {
@@ -32,9 +23,8 @@ export default new Vuex.Store({
       }
     }
   },
-
-  mutations: {
-    CREATE_TASK (state, { tasks, name }) {
+  actions: {
+    createTask ({ tasks, name }) {
       tasks.push({
         name,
         id: uuid(),
@@ -42,24 +32,24 @@ export default new Vuex.Store({
       })
     },
 
-    CREATE_COLUMN (state, { name }) {
-      state.board.columns.push({
+    createColumn ({ name }) {
+      this.board.columns.push({
         name,
         tasks: []
       })
     },
 
-    UPDATE_TASK (state, { task, key, value }) {
+    updateTask ({ task, key, value }) {
       task[key] = value
     },
 
-    MOVE_TASK (state, { fromTasks, toTasks, fromTaskIndex, toTaskIndex }) {
+    moveTask ({ fromTasks, toTasks, fromTaskIndex, toTaskIndex }) {
       const taskToMove = fromTasks.splice(fromTaskIndex, 1)[0]
       toTasks.splice(toTaskIndex, 0, taskToMove)
     },
 
-    MOVE_COLUMN (state, { fromColumnIndex, toColumnIndex }) {
-      const columnList = state.board.columns
+    moveColumn ({ fromColumnIndex, toColumnIndex }) {
+      const columnList = this.board.columns
 
       const columnToMove = columnList.splice(fromColumnIndex, 1)[0]
       columnList.splice(toColumnIndex, 0, columnToMove)

@@ -25,12 +25,19 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-
 import BoardColumn from '@/components/BoardColumn.vue'
+import { useBoardStore } from '@/stores/board.store'
 
 export default {
   name: 'Board',
+
+  setup () {
+    const boardStore = useBoardStore()
+
+    return {
+      boardStore
+    }
+  },
 
   components: {
     BoardColumn
@@ -43,7 +50,9 @@ export default {
   },
 
   computed: {
-    ...mapState(['board']),
+    board () {
+      return this.boardStore.board
+    },
 
     isTaskOpen () {
       return this.$route.name === 'task'
@@ -56,7 +65,7 @@ export default {
     },
 
     createColumn () {
-      this.$store.commit('CREATE_COLUMN', {
+      this.boardStore.createColumn({
         name: this.newColumnName
       })
       this.newColumnName = ''
